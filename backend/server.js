@@ -17,13 +17,10 @@ dotenv.config();
 
 const app = express();
 app.use(cors({
-  origin: [
-    "http://localhost:5173",
-    "https://jwellery-frontend-woad.vercel.app"
-  ],
-  methods: ["GET", "POST", "PUT", "DELETE"],
+  origin: "https://jwellery-frontend-woad.vercel.app",
   credentials: true
 }));
+
 
 app.use(express.json());
 
