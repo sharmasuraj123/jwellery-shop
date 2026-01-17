@@ -11,10 +11,20 @@ import Feedback from "./models/Feedback.js";
 import Analytics from "./models/Analytics.js";
 import { auth, admin } from "./middleware/auth.js";
 
+const PORT = process.env.PORT || 4000;
+
 dotenv.config();
 
 const app = express();
-app.use(cors());
+app.use(cors({
+  origin: [
+    "http://localhost:5173",
+    "https://jwellery-frontend-woad.vercel.app"
+  ],
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true
+}));
+
 app.use(express.json());
 
 mongoose.connect(process.env.MONGO_URI)
@@ -30,24 +40,34 @@ mongoose.connect(process.env.MONGO_URI)
 
 // POST /api/auth/google
 app.post("/api/auth/google", async (req, res) => {
-  const { credential } = req.body;
+  try {
+    const { credential } = req.body;
+    if (!credential) {
+      return res.status(400).json({ message: "Missing credential" });
+    }
 
-  const googleRes = await axios.get(
-    `https://oauth2.googleapis.com/tokeninfo?id_token=${credential}`
-  );
+    const googleRes = await axios.get(
+      `https://oauth2.googleapis.com/tokeninfo?id_token=${credential}`
+    );
 
-  const { email, name, picture } = googleRes.data;
+    const { email, name, picture } = googleRes.data;
 
-  let user = await User.findOne({ email });
-  if (!user) {
-    user = await User.create({ email, name, picture, is_admin: false });
+    let user = await User.findOne({ email });
+    if (!user) {
+      user = await User.create({ email, name, picture, is_admin: false });
+    }
+
+    const token = jwt.sign(
+      { id: user._id, email: user.email, name: user.name, is_admin: user.is_admin },
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" }
+    );
+
+    res.json({ token, user });
+  } catch (err) {
+    console.error("Google Auth Error:", err.message);
+    res.status(401).json({ message: "Google login failed" });
   }
-
-  const token = jwt.sign(user.toObject(), process.env.JWT_SECRET, {
-    expiresIn: "7d"
-  });
-
-  res.json({ token, user });
 });
 
 // GET /api/auth/me
@@ -122,8 +142,8 @@ app.get("/api/analytics/clicks", async (req, res) => {
 
 /* ---------- START ---------- */
 
-app.listen(4000, () => {
-  console.log("Backend running on http://localhost:4000");
+app.listen(PORT, () => {
+  console.log("Backend running on port", PORT);
 });
 
 
