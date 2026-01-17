@@ -9,7 +9,7 @@ import LoginModal from "../components/LoginModel";
 import { useAuth } from "../context/AuthContext";
 
 const BACKEND_URL = import.meta.REACT_APP_BACKEND_URL;
-const API = `/api`;
+const API = import.meta.env.VITE_BACKEND_URL + "/api";
 
 export default function HomePage() {
   const { user } = useAuth();

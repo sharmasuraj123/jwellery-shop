@@ -883,7 +883,7 @@ import {
 import { toast } from "sonner";
 import { ArrowLeft, Heart, ShoppingCart, MessageSquare } from "lucide-react";
 
-const API = `/api`;
+const API = import.meta.env.VITE_BACKEND_URL + "/api";
 
 const CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
 const UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
