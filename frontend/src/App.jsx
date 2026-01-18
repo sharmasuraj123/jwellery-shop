@@ -1,3 +1,5 @@
+console.log("APP LOADED");
+console.log("BACKEND:", import.meta.env.VITE_BACKEND_URL);
 import { useState, useEffect } from "react";
 import "./App.css";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
@@ -7,7 +9,7 @@ import AdminPage from "./pages/AdminPage";
 import { AuthProvider } from "./context/AuthContext";
 import { Toaster, toast } from "./components/ui/sonner";
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
-console.log("BACKEND URL =", import.meta.env.VITE_BACKEND_URL);
+
 
 
 function App() {
