@@ -36,6 +36,9 @@ mongoose.connect(process.env.MONGO_URI)
 /* ---------- AUTH ---------- */
 
 // POST /api/auth/google
+
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+
 app.post("/api/auth/google", async (req, res) => {
   try {
     const { credential } = req.body;
@@ -43,11 +46,13 @@ app.post("/api/auth/google", async (req, res) => {
       return res.status(400).json({ message: "Missing credential" });
     }
 
-    const googleRes = await axios.get(
-      `https://oauth2.googleapis.com/tokeninfo?id_token=${credential}`
-    );
+    const ticket = await client.verifyIdToken({
+      idToken: credential,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
 
-    const { email, name, picture } = googleRes.data;
+    const payload = ticket.getPayload();
+    const { email, name, picture } = payload;
 
     let user = await User.findOne({ email });
     if (!user) {
@@ -55,7 +60,12 @@ app.post("/api/auth/google", async (req, res) => {
     }
 
     const token = jwt.sign(
-      { id: user._id, email: user.email, name: user.name, is_admin: user.is_admin },
+      {
+        id: user._id,
+        email: user.email,
+        name: user.name,
+        is_admin: user.is_admin,
+      },
       process.env.JWT_SECRET,
       { expiresIn: "7d" }
     );
@@ -66,6 +76,7 @@ app.post("/api/auth/google", async (req, res) => {
     res.status(401).json({ message: "Google login failed" });
   }
 });
+
 
 // GET /api/auth/me
 app.get("/api/auth/me", auth, async (req, res) => {
