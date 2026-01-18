@@ -5,7 +5,7 @@ import { toast } from 'sonner';
 import { Send } from 'lucide-react';
 
 const BACKEND_URL = import.meta.REACT_APP_BACKEND_URL;
-const API = `/api`;
+const API = `${BACKEND_URL}/api`;
 
 export default function FeedbackSection() {
   const { user } = useAuth();
