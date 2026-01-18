@@ -1,4 +1,3 @@
-console.log("GOOGLE CLIENT ID:", import.meta.env.VITE_GOOGLE_CLIENT_ID);
 import { useState, useEffect } from "react";
 import "./App.css";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
@@ -8,7 +7,7 @@ import AdminPage from "./pages/AdminPage";
 import { AuthProvider } from "./context/AuthContext";
 import { Toaster, toast } from "./components/ui/sonner";
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
-console.log("CLIENT ID:", GOOGLE_CLIENT_ID);
+
 
 function App() {
   return (
